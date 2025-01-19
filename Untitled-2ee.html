@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REGISTRO DE VENTAS CONTADO REGIONAL SUR</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    th, td { padding: 8px; text-align: left; }
+    .error { color: red; font-size: 0.9em; }
+    .hidden { display: none; }
+    header { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>REGISTRO DE VENTAS CONTADO REGIONAL SUR</h1>
+  </header>
+
+  <form id="dataForm">
+    <label>CS: 
+      <select id="cs" required>
+        <option value="">Seleccione</option>
+        <option value="MACHALA_25 DE JUNIO">MACHALA_25 DE JUNIO</option>
+        <option value="MACHLA_SANTA ROSA">MACHLA_SANTA ROSA</option>
+        <option value="MACHALA_ LOS VERGELES">MACHALA_ LOS VERGELES</option>
+        <option value="MACHALA_COLON TINOCO">MACHALA_COLON TINOCO</option>
+        <option value="Machala_ORO VERDE">Machala_ORO VERDE</option>
+        <option value="Machala_VIA PUERTO BOLIVAR">Machala_VIA PUERTO BOLIVAR</option>
+        <option value="MACHALA_CALLE 10 DE AGOSTO">MACHALA_CALLE 10 DE AGOSTO</option>
+        <option value="MACHALA_CIRC SUR">MACHALA_CIRC SUR</option>
+        <option value="MACHLA_CIR.NORTE">MACHLA_CIR.NORTE</option>
+        <option value="MACHALA_KLEBER FRANCO">MACHALA_KLEBER FRANCO</option>
+        <option value="MACHALA_PARQUE LINEAL">MACHALA_PARQUE LINEAL</option>
+        <option value="ARENILLAS_EDMUNDO CHIRIBOGA">ARENILLAS_EDMUNDO CHIRIBOGA</option>
+        <option value="BALSAS_PADRE GUZMAN">BALSAS_PADRE GUZMAN</option>
+        <option value="EL CAMBIO _ BARRIO SAN VICENTE">EL CAMBIO _ BARRIO SAN VICENTE</option>
+        <option value="GUABO_CALLE 3 DE NOVIEMBRE">GUABO_CALLE 3 DE NOVIEMBRE</option>
+        <option value="HUAQUILLAS_AV.LA REPUBLICA">HUAQUILLAS_AV.LA REPUBLICA</option>
+        <option value="MARCABELI_MANUEL U GALLARDO">MARCABELI_MANUEL U GALLARDO</option>
+        <option value="PACCHA_CALLE 10 DE AGOSTO">PACCHA_CALLE 10 DE AGOSTO</option>
+        <option value="PASAJE_4 DE AGOSTO">PASAJE_4 DE AGOSTO</option>
+        <option value="PASAJE_AV.MACHALA Y AZUAY">PASAJE_AV.MACHALA Y AZUAY</option>
+        <option value="PIÑAS_AV SUCRE Y 10 DE AGOSTO">PIÑAS_AV SUCRE Y 10 DE AGOSTO</option>
+        <option value="PONCE ENRIQUEZ_BARRIO LA FLORIDA">PONCE ENRIQUEZ_BARRIO LA FLORIDA</option>
+        <option value="PORTOVELO_URB EL ORO 1">PORTOVELO_URB EL ORO 1</option>
+        <option value="PUERTO_GONZALO CORDOBA">PUERTO_GONZALO CORDOBA</option>
+        <option value="SANTA ROSA_30 DE AGOSTO">SANTA ROSA_30 DE AGOSTO</option>
+        <option value="SANTA ROSA_MODESTO CHAVEZ">SANTA ROSA_MODESTO CHAVEZ</option>
+        <option value="TENGUEL_CALLE COMERCIAL">TENGUEL_CALLE COMERCIAL</option>
+        <option value="ZARUMA_FRENTE AL MIRADOR">ZARUMA_FRENTE AL MIRADOR</option>
+      </select>
+    </label><br><br>
+
+    <label>Banco: 
+      <select id="banco" required>
+        <option value="">Seleccione</option>
+        <option value="BOLIVARIANO">BOLIVARIANO</option>
+        <option value="DEL AUSTRO">DEL AUSTRO</option>
+        <option value="GUAYAQUIL">GUAYAQUIL</option>
+        <option value="INTERNACIONAL">INTERNACIONAL</option>
+        <option value="PACIFICO">PACIFICO</option>
+        <option value="PICHINCHA">PICHINCHA</option>
+      </select>
+    </label><br><br>
+
+    <label>Forma de pago: 
+      <select id="formaPago" required>
+        <option value="">Seleccione</option>
+        <option value="Deposito">Depósito</option>
+        <option value="Transferencia">Transferencia</option>
+      </select>
+    </label><br><br>
+
+    <label>Fecha de cierre: <input type="date" id="fechaCierre" required></label><br><br>
+    <label>Valor del cierre: <input type="number" id="valorCierre" step="0.01" min="0" required></label><br><br>
+    <label>Número de comprobante: <input type="text" id="numComprobante" required></label><br><br>
+    <label>Valor: <input type="number" id="valor" step="0.01" min="0" required></label><br><br>
+    <label>Número de guía: <input type="text" id="numGuia"></label><br><br>
+    <button type="button" onclick="addData()">Agregar</button>
+  </form>
+
+  <button onclick="exportToExcel()">Exportar a Excel</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    const data = JSON.parse(localStorage.getItem('registroDatos')) || [];
+
+    function addData() {
+      const cs = document.getElementById('cs').value;
+      const fechaCierre = document.getElementById('fechaCierre').value;
+      const valorCierre = parseFloat(document.getElementById('valorCierre').value);
+      const numComprobante = document.getElementById('numComprobante').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+      const banco = document.getElementById('banco').value;
+      const formaPago = document.getElementById('formaPago').value;
+      const numGuia = document.getElementById('numGuia').value;
+
+      if (!cs || !fechaCierre || isNaN(valorCierre) || !numComprobante || isNaN(valor) || !banco || !formaPago) {
+        alert('Por favor, complete todos los campos obligatorios.');
+        return;
+      }
+
+      const newRow = { cs, fechaCierre, valorCierre, numComprobante, valor, banco, formaPago, numGuia };
+      data.push(newRow);
+      localStorage.setItem('registroDatos', JSON.stringify(data));
+
+      // Limpiar el formulario
+      document.getElementById('dataForm').reset();
+    }
+
+    function exportToExcel() {
+      const password = prompt('Ingresa la contraseña para exportar el archivo:');
+      if (password === 'josue12') {
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+        XLSX.writeFile(workbook, 'datos.xlsx');
+      } else {
+        alert('Contraseña incorrecta.');
+      }
+    }
+  </script>
+</body>
+</html>
+
